@@ -21,7 +21,8 @@ unsigned int port = 8888;      // local port to listen on
 EthernetUDP Udp;
 
 // named constant for the pin the sensor is connected to
-const int sensorPin = A0;
+const int temperaturePin = A0;
+const int lightPin = A1;
 
 void setup(){
   // open a serial connection to display values
@@ -35,8 +36,7 @@ void loop(){
   char _buffer[200]; 
   // read the value on AnalogIn pin 0 
   // and store it in a variable
-  char temp[10];
-  int sensorVal = analogRead(sensorPin);
+  int sensorVal = analogRead(temperaturePin);
 
   // convert the ADC reading to voltage
   float voltage = (sensorVal/1024.0) * 5.0;
@@ -46,10 +46,15 @@ void loop(){
   // the datasheet says there's a 500 mV offset
   // ((volatge - 500mV) times 100)
   float temperature = (voltage - .5) * 100;
+  
+  int lightVal = analogRead(lightPin);
+  float lightvoltage = (lightVal/1024.0) * 5.0;
+  float lux = lightvoltage*lightvoltage*20;
 
-
+  char temp1[10];
+  char temp2[10];
   //String data = "sensor Value: " + sensorVal + ", Volts: " + voltageAsString + ", degrees C: " +  temperatureAsString;
-  sprintf(_buffer, "{'version':'1.0.0', 'temp': %s}\n", dtostrf(temperature,1,2,temp));
+  sprintf(_buffer, "{'version':'1.0.0', 'temp': %s, 'lux': %s}\n", dtostrf(temperature,1,2,temp1),  dtostrf(lux,1,2,temp2));
 
   Serial.print(_buffer);
 
