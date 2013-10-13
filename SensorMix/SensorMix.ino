@@ -1,5 +1,6 @@
 #include <SPI.h>
 #include <Ethernet.h>
+#include <LiquidCrystal.h>
 
 
 // the media access control (ethernet hardware) address for the shield:
@@ -24,12 +25,19 @@ EthernetUDP Udp;
 const int temperaturePin = A0;
 const int lightPin = A1;
 
+// initialize the library with the numbers of the interface pins
+LiquidCrystal lcd(9, 8, 5, 4, 3, 2);
+
 void setup(){
   // open a serial connection to display values
   Serial.begin(9600);
 
   Ethernet.begin(mac, ip, dns1, gateway, subnet); 
   Udp.begin(port);
+
+  lcd.begin(16, 2);
+  lcd.print("Hello World!!!");
+
 }
 
 void loop(){
@@ -46,7 +54,7 @@ void loop(){
   // the datasheet says there's a 500 mV offset
   // ((volatge - 500mV) times 100)
   float temperature = (voltage - .5) * 100;
-  
+
   int lightVal = analogRead(lightPin);
   float lightvoltage = (lightVal/1024.0) * 5.0;
   float lux = lightvoltage*lightvoltage*20;
@@ -63,4 +71,5 @@ void loop(){
   Udp.endPacket();
   delay(10000);
 }
+
 
