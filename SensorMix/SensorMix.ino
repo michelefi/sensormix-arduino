@@ -36,12 +36,14 @@ void setup(){
   Udp.begin(port);
 
   lcd.begin(16, 2);
-  lcd.print("Hello World!!!");
+  lcd.print("SensorMix");
 
 }
 
 void loop(){
-  char _buffer[200]; 
+  char _buffer[200];
+  char _lcd[16]; 
+
   // read the value on AnalogIn pin 0 
   // and store it in a variable
   int sensorVal = analogRead(temperaturePin);
@@ -63,13 +65,22 @@ void loop(){
   char temp2[10];
   //String data = "sensor Value: " + sensorVal + ", Volts: " + voltageAsString + ", degrees C: " +  temperatureAsString;
   sprintf(_buffer, "{'version':'1.0.0', 'temp': %s, 'lux': %s}\n", dtostrf(temperature,1,2,temp1),  dtostrf(lux,1,2,temp2));
-
   Serial.print(_buffer);
 
   Udp.beginPacket(remoteIp, port);
   Udp.write(_buffer);
   Udp.endPacket();
+  
+  lcd.clear();
+  // set the cursor to column 0, line 0     
+  lcd.setCursor(0, 0);
+  lcd.print("T: ");
+  lcd.print(temp1);
+  lcd.setCursor(0, 1);
+  lcd.print("L: ");
+  lcd.print(temp2);
   delay(10000);
 }
+
 
 
