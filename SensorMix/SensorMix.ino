@@ -56,31 +56,37 @@ void loop(){
   // the datasheet says there's a 500 mV offset
   // ((volatge - 500mV) times 100)
   float temperature = (voltage - .5) * 100;
+  char temperatureChar[10];
+  dtostrf(temperature,1,2,temperatureChar);
 
   int lightVal = analogRead(lightPin);
   float lightvoltage = (lightVal/1024.0) * 5.0;
   float lux = lightvoltage*lightvoltage*20;
+  char luxChar[10];
+  dtostrf(lux,1,2,luxChar);
 
-  char temp1[10];
-  char temp2[10];
   //String data = "sensor Value: " + sensorVal + ", Volts: " + voltageAsString + ", degrees C: " +  temperatureAsString;
-  sprintf(_buffer, "{'version':'1.0.0', 'temp': %s, 'lux': %s}\n", dtostrf(temperature,1,2,temp1),  dtostrf(lux,1,2,temp2));
+  sprintf(_buffer, "{'version':'1.0.0', 'temp': %s, 'lux': %s}\n", temperatureChar, luxChar );
   Serial.print(_buffer);
 
   Udp.beginPacket(remoteIp, port);
   Udp.write(_buffer);
   Udp.endPacket();
-  
+
   lcd.clear();
   // set the cursor to column 0, line 0     
   lcd.setCursor(0, 0);
-  lcd.print("T: ");
-  lcd.print(temp1);
+  lcd.print("TEMP: ");
+  lcd.print(temperatureChar);
   lcd.setCursor(0, 1);
-  lcd.print("L: ");
-  lcd.print(temp2);
+  lcd.print("LUX: ");
+  lcd.print(luxChar);
   delay(10000);
 }
+
+
+
+
 
 
 
