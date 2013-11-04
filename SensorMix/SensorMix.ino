@@ -66,7 +66,7 @@ void loop(){
   dtostrf(lux,1,2,luxChar);
 
   //String data = "sensor Value: " + sensorVal + ", Volts: " + voltageAsString + ", degrees C: " +  temperatureAsString;
-  sprintf(_buffer, "{'version':'1.0.0', 'temp': %s, 'lux': %s}\n", temperatureChar, luxChar );
+  sprintf(_buffer, "{'device_id':'urn:rixf:org.arduino/sensor_id', 'temp': %s, 'lux': %s}\n", temperatureChar, luxChar );
   Serial.print(_buffer);
 
   Udp.beginPacket(remoteIp, port);
