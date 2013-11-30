@@ -9,7 +9,7 @@ byte mac[] = {
 byte packetBuffer[UDP_TX_PACKET_MAX_SIZE]; //buffer to hold incoming packet,
 //the IP address for the shield:
 byte ip[] = { 
-  192, 168, 1, 100 };   
+  192, 168, 1, 202 };   
 byte remoteIp[] = { 
   192, 168, 1, 5 };   
 byte dns1[] = { 
@@ -18,7 +18,7 @@ byte gateway[] = {
   192, 168, 1, 254 };    
 byte subnet[] = { 
   255, 255, 255, 0 };
-unsigned int port = 8888;      // local port to listen on
+unsigned int port = 10081;
 EthernetUDP Udp;
 
 // named constant for the pin the sensor is connected to
@@ -38,6 +38,10 @@ void setup(){
   lcd.begin(16, 2);
   lcd.print("SensorMix");
 
+  char  initBuffer[] = "{ 'sensor' : {'id':'urn:rixf:org.arduino/sensor_id', type : 'urn:rixf:net.sensormix/device_types/arduino', name: 'Arduino', description : 'Rev. 1.03, Temp and Light sensors'}}\n";      
+  Udp.beginPacket(remoteIp, port);
+  Udp.write(initBuffer);
+  Udp.endPacket();
 }
 
 void loop(){
@@ -66,7 +70,7 @@ void loop(){
   dtostrf(lux,1,2,luxChar);
 
   //String data = "sensor Value: " + sensorVal + ", Volts: " + voltageAsString + ", degrees C: " +  temperatureAsString;
-  sprintf(_buffer, "{'device_id':'urn:rixf:org.arduino/sensor_id', 'temp': %s, 'lux': %s}\n", temperatureChar, luxChar );
+  sprintf(_buffer, "{'sample': {'device_id':'urn:rixf:org.arduino/sensor_id', 'temp': '%s', 'lux': '%s'}}\n", temperatureChar, luxChar );
   Serial.print(_buffer);
 
   Udp.beginPacket(remoteIp, port);
@@ -81,8 +85,9 @@ void loop(){
   lcd.setCursor(0, 1);
   lcd.print("LUX: ");
   lcd.print(luxChar);
-  delay(10000);
+  delay(30000);
 }
+
 
 
 
